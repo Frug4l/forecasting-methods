@@ -3,42 +3,739 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Игра-викторина | Методы прогнозирования</title>
-    <link rel="stylesheet" href="game.css">
+    <title>HACKER QUIZ | Методы прогнозирования</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', 'Fira Code', 'Source Code Pro', monospace;
+            background: #0a0a0f;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Матричный фон */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Главный контейнер */
+        .game-container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Шапка */
+        .game-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: rgba(0, 255, 0, 0.1);
+            color: #0f0;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            border: 1px solid #0f0;
+            font-family: monospace;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 20px #0f0;
+            text-shadow: none;
+        }
+
+        .game-header h1 {
+            font-size: 2.5rem;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+            letter-spacing: 3px;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0 0 10px #0f0, 0 0 20px #0f0; }
+            95% { text-shadow: 0 0 10px #0f0, 0 0 20px #0f0; }
+            96% { text-shadow: -2px 0 red, 2px 0 blue; }
+            97% { text-shadow: 2px 0 red, -2px 0 blue; }
+        }
+
+        .game-header p {
+            color: #0f0;
+            opacity: 0.7;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+
+        /* Статистика */
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #0f0;
+            border-radius: 10px;
+            padding: 15px 25px;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+        }
+
+        .score, .question-counter {
+            color: #0f0;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .score span, .question-counter span {
+            color: #fff;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px #0f0;
+        }
+
+        /* Карточка викторины */
+        .quiz-card {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #0f0;
+            border-radius: 15px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.2), inset 0 0 20px rgba(0, 255, 0, 0.05);
+            animation: slideIn 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.05), transparent);
+            transform: rotate(45deg);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0f0;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+            text-shadow: 0 0 5px #0f0;
+            font-family: monospace;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Терминальная строка */
+        .terminal-prompt {
+            color: #0f0;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .terminal-prompt::before {
+            content: '>_ ';
+            color: #0f0;
+        }
+
+        /* Варианты ответов */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #0f0;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: monospace;
+            color: #0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            background: rgba(0, 255, 0, 0.15);
+            transform: translateX(10px);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+            border-width: 2px;
+        }
+
+        .option.correct {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #0f0;
+            box-shadow: 0 0 20px #0f0;
+            animation: pulse 0.5s ease;
+        }
+
+        .option.wrong {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: #f00;
+            box-shadow: 0 0 20px #f00;
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Обратная связь */
+        .feedback {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #0f0;
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+        }
+
+        .feedback.wrong {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #f00;
+            color: #f00;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Кнопка следующего вопроса */
+        .next-btn {
+            width: 100%;
+            background: rgba(0, 255, 0, 0.15);
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-family: monospace;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .next-btn:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 30px #0f0;
+            text-shadow: none;
+        }
+
+        /* Карточка результатов */
+        .result-card {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #0f0;
+            border-radius: 15px;
+            padding: 2.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
+            animation: slideIn 0.5s ease;
+        }
+
+        .result-card h2 {
+            color: #0f0;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px #0f0;
+        }
+
+        .final-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #0f0;
+            margin: 1.5rem 0;
+            text-shadow: 0 0 20px #0f0;
+            font-family: monospace;
+        }
+
+        .result-message {
+            font-size: 1.2rem;
+            color: #0f0;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .restart-btn, .home-btn {
+            background: transparent;
+            border: 2px solid #0f0;
+            color: #0f0;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-family: monospace;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0 10px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .restart-btn:hover, .home-btn:hover {
+            background: #0f0;
+            color: #000;
+            box-shadow: 0 0 20px #0f0;
+        }
+
+        /* Счётчик вопросов в стиле терминала */
+        .progress-bar {
+            margin-top: 20px;
+            height: 3px;
+            background: rgba(0, 255, 0, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #0f0;
+            box-shadow: 0 0 10px #0f0;
+            transition: width 0.3s ease;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .quiz-card {
+                padding: 1.5rem;
+            }
+            
+            .question-text {
+                font-size: 1.1rem;
+            }
+            
+            .game-stats {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .game-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .back-btn {
+                position: static;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="matrix-bg">
+        <canvas id="matrixCanvas"></canvas>
+    </div>
+
     <div class="game-container">
         <div class="game-header">
-            <a href="index.html" class="back-btn">← На главную</a>
-            <h1>🎮 Викторина: Методы прогнозирования</h1>
-            <p>Проверь свои знания!</p>
+            <a href="index.html" class="back-btn">⌂ ROOT@HOME:~$</a>
+            <h1>█ HACKER QUIZ █</h1>
+            <p>[ методы прогнозирования v1.0 ]</p>
         </div>
 
         <div class="game-stats">
-            <div class="score">Счёт: <span id="score">0</span></div>
-            <div class="question-counter">Вопрос <span id="current">1</span> / <span id="total">10</span></div>
+            <div class="score">SCORE: <span id="score">0</span></div>
+            <div class="question-counter">QUESTION <span id="current">1</span> / <span id="total">10</span></div>
         </div>
 
         <div class="quiz-card" id="quizCard">
+            <div class="terminal-prompt">execute_question.exe</div>
             <div class="question-text" id="questionText">
-                Загрузка вопроса...
+                Загрузка...
             </div>
             <div class="options" id="optionsContainer">
-                <!-- Варианты ответов будут здесь -->
+                <!-- Варианты ответов -->
             </div>
             <div class="feedback" id="feedback"></div>
-            <button class="next-btn" id="nextBtn" style="display: none;">Следующий вопрос →</button>
+            <button class="next-btn" id="nextBtn" style="display: none;">[ ENTER ] СЛЕДУЮЩИЙ ВОПРОС</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
         </div>
 
         <div class="result-card" id="resultCard" style="display: none;">
-            <h2>🏆 Результаты викторины</h2>
+            <h2>█ GAME OVER █</h2>
             <div class="final-score" id="finalScore"></div>
             <div class="result-message" id="resultMessage"></div>
-            <button class="restart-btn" onclick="restartGame()">Играть снова</button>
-            <a href="index.html" class="home-btn">Вернуться на главную</a>
+            <button class="restart-btn" onclick="restartGame()">⟳ RESTART.exe</button>
+            <a href="index.html" class="home-btn">⌂ EXIT TO MAIN</a>
         </div>
     </div>
 
-    <script src="game.js"></script>
+    <script>
+        // Матричный эффект на канвасе
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        const charArray = chars.split('');
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 50);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Вопросы для викторины
+        const questions = [
+            {
+                question: "Что означает аббревиатура ARIMA?",
+                options: [
+                    "Autoregressive Integrated Moving Average",
+                    "Artificial Intelligence Machine Algorithm",
+                    "Advanced Regression Integration Model",
+                    "Automatic Random Input Method Array"
+                ],
+                correct: 0,
+                explanation: "ARIMA (Autoregressive Integrated Moving Average) - классическая модель для анализа временных рядов."
+            },
+            {
+                question: "Какая нейросеть лучше всего подходит для временных рядов с долгосрочными зависимостями?",
+                options: [
+                    "CNN (Свёрточная сеть)",
+                    "LSTM (Long Short-Term Memory)",
+                    "GAN (Генеративно-состязательная сеть)",
+                    "RBM (Ограниченная машина Больцмана)"
+                ],
+                correct: 1,
+                explanation: "LSTM специально создана для запоминания информации на длительных промежутках времени."
+            },
+            {
+                question: "Какой механизм является ключевым в архитектуре Трансформер?",
+                options: [
+                    "Свёртка",
+                    "Пулдинг",
+                    "Самовнимание (Self-attention)",
+                    "Рекуррентность"
+                ],
+                correct: 2,
+                explanation: "Self-attention позволяет модели оценивать важность элементов независимо от расстояния."
+            },
+            {
+                question: "Какой метод прогнозирования показал точность до 95% при анализе данных с инсулиновых помп?",
+                options: [
+                    "Простая ARIMA",
+                    "LSTM с кластеризацией временных рядов",
+                    "Экспоненциальное сглаживание",
+                    "Линейная регрессия"
+                ],
+                correct: 1,
+                explanation: "Кластеризация + LSTM позволила достичь точности до 95%."
+            },
+            {
+                question: "Что из перечисленного является ансамблевым методом?",
+                options: [
+                    "ARIMA",
+                    "CatBoost",
+                    "Трансформер",
+                    "LSTM"
+                ],
+                correct: 1,
+                explanation: "CatBoost - метод градиентного бустинга, относится к ансамблевым методам."
+            },
+            {
+                question: "Какой подход используется в гибридных моделях?",
+                options: [
+                    "Только нейросети",
+                    "ARIMA для трендов + нейросети для нелинейностей",
+                    "Отказ от исторических данных",
+                    "Только экспертные оценки"
+                ],
+                correct: 1,
+                explanation: "Гибридные модели объединяют сильные стороны разных подходов."
+            },
+            {
+                question: "На сколько % возрастает загруженность дорог при снегопаде?",
+                options: [
+                    "10%",
+                    "30%",
+                    "50%",
+                    "70%"
+                ],
+                correct: 1,
+                explanation: "При снегопаде загруженность возрастает на 30%, при дожде - на 20%."
+            },
+            {
+                question: "Какой метод позволяет проигрывать различные сценарии?",
+                options: [
+                    "Точечный прогноз",
+                    "Имитационное моделирование",
+                    "Линейная экстраполяция",
+                    "Метод наименьших квадратов"
+                ],
+                correct: 1,
+                explanation: "Имитационное моделирование создаёт цифровые копии систем."
+            },
+            {
+                question: "Какое ограничение у модели ARIMA?",
+                options: [
+                    "Слишком высокая точность",
+                    "Требование стационарности и линейность",
+                    "Невозможность использования на ПК",
+                    "Отсутствие математического обоснования"
+                ],
+                correct: 1,
+                explanation: "ARIMA требует стационарности процесса и предполагает линейные зависимости."
+            },
+            {
+                question: "Что НЕ является областью применения прогнозирования?",
+                options: [
+                    "Медицина (уровень глюкозы)",
+                    "Транспорт (загруженность дорог)",
+                    "Астрология (судьба)",
+                    "Энергетика (потребление)"
+                ],
+                correct: 2,
+                explanation: "Астрология не является научной областью применения методов прогнозирования."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const nextBtn = document.getElementById('nextBtn');
+        const feedback = document.getElementById('feedback');
+        const quizCard = document.getElementById('quizCard');
+        const resultCard = document.getElementById('resultCard');
+        const scoreSpan = document.getElementById('score');
+        const currentSpan = document.getElementById('current');
+        const totalSpan = document.getElementById('total');
+        const progressFill = document.getElementById('progressFill');
+
+        totalSpan.textContent = questions.length;
+
+        function loadQuestion() {
+            answered = false;
+            nextBtn.style.display = 'none';
+            feedback.innerHTML = '';
+            feedback.className = 'feedback';
+            
+            const question = questions[currentQuestionIndex];
+            questionText.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option;
+                optionDiv.onclick = () => checkAnswer(index);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            currentSpan.textContent = currentQuestionIndex + 1;
+            progressFill.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        }
+
+        function checkAnswer(selectedIndex) {
+            if (answered) return;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = selectedIndex === question.correct;
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                option.classList.add('disabled');
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                }
+                if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('wrong');
+                }
+            });
+            
+            if (isCorrect) {
+                score++;
+                scoreSpan.textContent = score;
+                feedback.innerHTML = `✅ [ACCESS GRANTED] ${question.explanation}`;
+                feedback.classList.add('correct');
+            } else {
+                feedback.innerHTML = `❌ [ACCESS DENIED] Правильный ответ: ${question.options[question.correct]}. ${question.explanation}`;
+                feedback.classList.add('wrong');
+            }
+            
+            answered = true;
+            nextBtn.style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            quizCard.style.display = 'none';
+            resultCard.style.display = 'block';
+            
+            const percentage = (score / questions.length) * 100;
+            const finalScore = document.getElementById('finalScore');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            finalScore.innerHTML = `${score} / ${questions.length}<br><span style="font-size: 1rem;">${Math.round(percentage)}%</span>`;
+            
+            if (percentage === 100) {
+                resultMessage.innerHTML = "🏆 [ SYSTEM HACKED ] 🏆<br>Вы достигли совершенства!";
+            } else if (percentage >= 80) {
+                resultMessage.innerHTML = "🌟 [ EXPERT LEVEL ] 🌟<br>Вы отлично разбираетесь в теме!";
+            } else if (percentage >= 60) {
+                resultMessage.innerHTML = "👍 [ GOOD JOB ] 👍<br>Хороший результат!";
+            } else if (percentage >= 40) {
+                resultMessage.innerHTML = "📚 [ STUDY MODE ] 📚<br>Рекомендуем повторить материал!";
+            } else {
+                resultMessage.innerHTML = "💀 [ SYSTEM FAILURE ] 💀<br>Загрузите обновление знаний!";
+            }
+        }
+
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            scoreSpan.textContent = score;
+            
+            quizCard.style.display = 'block';
+            resultCard.style.display = 'none';
+            
+            loadQuestion();
+        }
+
+        nextBtn.addEventListener('click', nextQuestion);
+        loadQuestion();
+    </script>
 </body>
 </html>
