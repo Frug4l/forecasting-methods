@@ -5,6 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Современные методы прогнозирования | Максименко Д.А.</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Дополнительные стили для кнопки игры прямо здесь, на всякий случай */
+        .game-nav-link {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 8px 20px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+        .game-nav-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(245,87,108,0.4);
+        }
+        .game-button-hero {
+            display: inline-block;
+            margin-top: 20px;
+            margin-left: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .game-button-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245,87,108,0.4);
+        }
+        @media (max-width: 768px) {
+            .game-button-hero {
+                display: block;
+                margin: 15px auto 0;
+                text-align: center;
+                width: fit-content;
+            }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -16,6 +55,7 @@
                 <li><a href="#hybrid">Гибридные подходы</a></li>
                 <li><a href="#applications">Применение</a></li>
                 <li><a href="#references">Источники</a></li>
+                <li><a href="game.html" class="game-nav-link">🎮 Игра-викторина</a></li>
             </ul>
         </div>
     </nav>
@@ -28,7 +68,10 @@
                 <p>Студент: Максименко Д. А. | Группа: ИДБ-24-15</p>
                 <p>Преподаватель: Тарасов И.В. | Москва, 2026</p>
             </div>
-            <button class="cta-button" onclick="scrollToMethods()">Изучить методы →</button>
+            <div>
+                <button class="cta-button" onclick="scrollToMethods()">📖 Изучить методы</button>
+                <a href="game.html" class="game-button-hero">🎮 Проверить знания в игре</a>
+            </div>
         </div>
     </section>
 
@@ -195,5 +238,12 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        function scrollToMethods() {
+            document.getElementById('methods').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+    </script>
 </body>
 </html>
