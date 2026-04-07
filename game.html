@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра-викторина | Методы прогнозирования</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <a href="index.html" class="back-btn">← На главную</a>
+            <h1>🎮 Викторина: Методы прогнозирования</h1>
+            <p>Проверь свои знания!</p>
+        </div>
+
+        <div class="game-stats">
+            <div class="score">Счёт: <span id="score">0</span></div>
+            <div class="question-counter">Вопрос <span id="current">1</span> / <span id="total">10</span></div>
+        </div>
+
+        <div class="quiz-card" id="quizCard">
+            <div class="question-text" id="questionText">
+                Загрузка вопроса...
+            </div>
+            <div class="options" id="optionsContainer">
+                <!-- Варианты ответов будут здесь -->
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <button class="next-btn" id="nextBtn" style="display: none;">Следующий вопрос →</button>
+        </div>
+
+        <div class="result-card" id="resultCard" style="display: none;">
+            <h2>🏆 Результаты викторины</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="result-message" id="resultMessage"></div>
+            <button class="restart-btn" onclick="restartGame()">Играть снова</button>
+            <a href="index.html" class="home-btn">Вернуться на главную</a>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
