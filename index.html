@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Современные методы прогнозирования | Максименко Д.А.</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">📊 Прогнозирование 2026</div>
+            <ul class="nav-menu">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#methods">Методы</a></li>
+                <li><a href="#hybrid">Гибридные подходы</a></li>
+                <li><a href="#applications">Применение</a></li>
+                <li><a href="#references">Источники</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Современные методы прогнозирования</h1>
+            <p>явлений и процессов</p>
+            <div class="hero-info">
+                <p>Студент: Максименко Д. А. | Группа: ИДБ-24-15</p>
+                <p>Преподаватель: Тарасов И.В. | Москва, 2026</p>
+            </div>
+            <button class="cta-button" onclick="scrollToMethods()">Изучить методы →</button>
+        </div>
+    </section>
+
+    <section id="goals" class="section">
+        <div class="container">
+            <h2>🎯 Цели и задачи</h2>
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <h3>Актуальность</h3>
+                    <p>Высокая динамика и неопределённость современного мира требуют новых подходов к прогнозированию. Традиционные методы (ARIMA) эффективны для линейных процессов, но реальные системы нелинейны и сложны.</p>
+                </div>
+                <div class="goal-card">
+                    <h3>Цель</h3>
+                    <p>Систематизировать и проанализировать современные методы прогнозирования, включая классические статистические подходы, методы машинного обучения, глубокие нейросети и гибридные архитектуры.</p>
+                </div>
+                <div class="goal-card">
+                    <h3>Задачи</h3>
+                    <ul>
+                        <li>Рассмотреть классические методы (ARIMA)</li>
+                        <li>Изучить LSTM, Трансформеры, ансамбли</li>
+                        <li>Проанализировать гибридные подходы</li>
+                        <li>Привести примеры применения</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="methods" class="section bg-light">
+        <div class="container">
+            <h2>🧠 Основные методы прогнозирования</h2>
+            <div class="methods-grid">
+                <div class="method-card">
+                    <div class="method-icon">📈</div>
+                    <h3>Классические (ARIMA)</h3>
+                    <p>Авторегрессия и скользящее среднее. Требуют стационарности, интерпретируемы. Служат бенчмарком для гибридных систем.</p>
+                    <span class="tag">Статистика</span>
+                </div>
+                <div class="method-card">
+                    <div class="method-icon">🔄</div>
+                    <h3>LSTM сети</h3>
+                    <p>Рекуррентные нейросети с долгой краткосрочной памятью. Решают проблему затухания градиента. Идеальны для временных рядов.</p>
+                    <span class="tag">Deep Learning</span>
+                </div>
+                <div class="method-card">
+                    <div class="method-icon">✨</div>
+                    <h3>Трансформеры</h3>
+                    <p>Механизм самовнимания. Informer, Autoformer для сверхдлинных последовательностей и сезонности.</p>
+                    <span class="tag">Attention</span>
+                </div>
+                <div class="method-card">
+                    <div class="method-icon">🌲</div>
+                    <h3>Ансамблевые методы</h3>
+                    <p>CatBoost, LightGBM. Работа с разнородными признаками, устойчивость к пересмотру данных.</p>
+                    <span class="tag">Boosting</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="hybrid" class="section">
+        <div class="container">
+            <h2>🔗 Гибридные и интеграционные подходы</h2>
+            <div class="hybrid-grid">
+                <div class="hybrid-item">
+                    <h3>Кластеризация + LSTM</h3>
+                    <p>Параметризация временных рядов (среднее, дисперсия, пики) → кластеризация → отдельная LSTM для каждого кластера. Точность до 95%.</p>
+                </div>
+                <div class="hybrid-item">
+                    <h3>ARIMA + Нейросети</h3>
+                    <p>ARIMA моделирует линейные тренды и сезонность, нейросеть обучается на остатках, улавливая нелинейности.</p>
+                </div>
+                <div class="hybrid-item">
+                    <h3>Интеграционное прогнозирование</h3>
+                    <p>Объединение числовых рядов и экспертных суждений для адаптации к структурным сдвигам.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="applications" class="section bg-light">
+        <div class="container">
+            <h2>🏥 Практическое применение</h2>
+            <div class="apps-grid">
+                <div class="app-card">
+                    <div class="app-icon">🏥</div>
+                    <h3>Медицина</h3>
+                    <p>Прогноз уровня глюкозы у диабетиков (LSTM + кластеризация) → точность 95%. Прогноз COVID-19 для нагрузки на здравоохранение.</p>
+                </div>
+                <div class="app-card">
+                    <div class="app-icon">🚗</div>
+                    <h3>Транспорт</h3>
+                    <p>Прогноз загруженности дорог с учётом погоды (снег +30% нагрузки). Имитационное моделирование аварийности на перекрёстках.</p>
+                </div>
+                <div class="app-card">
+                    <div class="app-icon">💰</div>
+                    <h3>Макроэкономика</h3>
+                    <p>CNN + бустинг для прогноза ВВП. Устойчивость к пересмотрам данных и кризисам (COVID-19).</p>
+                </div>
+                <div class="app-card">
+                    <div class="app-icon">⚡</div>
+                    <h3>Энергетика</h3>
+                    <p>LSTM и Трансформеры для прогноза потребления электроэнергии. Балансировка возобновляемых источников.</p>
+                </div>
+                <div class="app-card">
+                    <div class="app-icon">📦</div>
+                    <h3>Логистика</h3>
+                    <p>Прогноз спроса для розничных сетей. Учёт сотен факторов: промо, погода, соцсети.</p>
+                </div>
+                <div class="app-card">
+                    <div class="app-icon">💊</div>
+                    <h3>Эпидемиология</h3>
+                    <p>SEIR + нейросети для прогноза распространения инфекций.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" class="section">
+        <div class="container">
+            <h2>📈 Ключевые выводы</h2>
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-number">1</div>
+                    <p>Интеграция, а не война — статистика + нейросети дают синергию</p>
+                </div>
+                <div class="result-item">
+                    <div class="result-number">2</div>
+                    <p>Адаптивность — кластеризация и специализированные модели</p>
+                </div>
+                <div class="result-item">
+                    <div class="result-number">3</div>
+                    <p>Учёт неопределённости — байесовские подходы, Монте-Карло</p>
+                </div>
+                <div class="result-item">
+                    <div class="result-number">4</div>
+                    <p>Переход к вероятностным и сценарным прогнозам</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="references" class="section bg-light">
+        <div class="container">
+            <h2>📚 Список литературы</h2>
+            <ul class="references-list">
+                <li>Министерство науки и высшего образования РФ. (2025). Разработаны уникальные методики прогнозирования будущих событий на основе интеллектуального анализа данных.</li>
+                <li>Авдеева, З. К., & Коврига, С. В. (2024). Интеграционное прогнозирование нестационарных процессов, представленных временными рядами. Обзор. Управление большими системами, (112), 129–167.</li>
+                <li>A Hybrid Framework Integrating Traditional Models and Deep Learning for Multi-Scale Time Series Forecasting. (2025). PMC/NCBI. ID: PMC11851739.</li>
+                <li>Джункеев, У. (2024). CLARA и CARLSON: комбинации ансамблевых и нейросетевых методов машинного обучения для прогнозирования ВВП. Деньги и кредит, 83(3), 45–69.</li>
+                <li>Казанский национальный исследовательский технический университет им. А.Н. Туполева. (2025). Метод адаптивного прогнозирования данных, зависящих от времени, на основе LSTM-моделей с использованием кластеризации временных рядов.</li>
+                <li>Загидуллин, Р. (2025). Прогнозирование транспортной загруженности с использованием методов машинного обучения.</li>
+                <li>Бокс, Дж., Дженкинс, Г. (2019). Анализ временных рядов: прогноз и управление.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>ФГБОУ ВО «МГТУ «СТАНКИН» | Институт информационных технологий | Кафедра управления и информатики в технических системах</p>
+            <p>Реферат по дисциплине «Модели и методы теории вычислений» | Направление: 09.03.03 «Прикладная информатика»</p>
+            <p>© 2026 Максименко Д.А. Все права защищены</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
